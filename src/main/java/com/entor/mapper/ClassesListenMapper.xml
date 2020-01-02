@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.IClassesListenDao">
+	<insert id="add" parameterType="ClassesListen">
+		insert into crm_classes_listen(
+						classes_id,
+						classes_name,
+						major_id,
+						manager_id,
+						teacher_id,
+						classes_room,
+						begin_date,
+						end_date,
+						create_time
+				)value(
+						#{classesId},
+						#{classesName},
+						#{majorId},
+						#{managerId},
+						#{teacherId},
+						#{classesRoom},
+						#{beginDate},
+						#{endDate},
+						now()
+					)
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_classes_listen(
+					classes_id,
+					classes_name,
+					major_id,
+					manager_id,
+					teacher_id,
+					classes_room,
+					begin_date,
+					end_date,
+					create_time
+		)values
+			<foreach collection="list" item="c" separator="," >
+				(
+						#{c.classesId},
+						#{c.classesName},
+						#{c.majorId},
+						#{c.managerId},
+						#{c.teacherId},
+						#{c.classesRoom},
+						#{c.beginDate},
+						#{c.endDate},
+						#{c.createTime},
+						now()
+					)
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_classes_listen where classes_id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_classes_listen where classes_id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="ClassesListen">
+		update crm_classes_listen set 
+					classes_name = #{classesName},
+					major_id = #{majorId},
+					manager_id = #{managerId},
+					teacher_id = #{teacherId},
+					classes_room = #{classesRoom},
+					begin_date = #{beginDate},
+					end_date = #{endDate}
+		where classes_id = #{classesId}
+	</update>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from crm_classes_listen
+	</select>
+	
+	<select id="queryById" resultType="ClassesListen">
+		select * from crm_classes_listen where classes_id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="ClassesListen">
+		select *from crm_classes_listen
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="VClassesStudy">
+		select * from view_classes_listen limit #{start},#{pageSize}
+	</select>
+	
+	<select id="queryByMap" parameterType="map" resultType="ClassesListen">
+		select * from crm_classes_listen where 1=1
+		<if test="name != null">
+			<bind name="name" value="'%'+name+'%'"/>
+			and classes_name like #{name}
+		</if>
+	</select>
+</mapper>

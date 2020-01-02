@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.IRoomDao">
+	
+	<insert id="add" parameterType="Room">
+		insert into crm_room(
+							room_id,
+							room_name,
+							room_address,
+							room_total_size,
+							room_empty_size,
+							room_person_sex,
+							room_money,
+							room_deposit,
+							room_manager,
+							room_manager_phone,
+							create_time
+						)value(
+							#{roomId},
+							#{roomName},
+							#{roomAddress},
+							#{roomTotalSize},
+							#{roomEmptySize},
+							#{roomPersonSex},
+							#{roomMoney},
+							#{roomDeposit},
+							#{roomManager},
+							#{roomManagerPhone},
+							now()
+						)
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_room(
+							room_id,
+							room_name,
+							room_address,
+							room_total_size,
+							room_empty_size,
+							room_person_sex,
+							room_money,
+							room_deposit,
+							room_manager,
+							room_manager_phone,
+							create_time
+						)values
+			<foreach collection="list" item="s" separator="," >
+				(
+							#{roomId},
+							#{roomName},
+							#{roomAddress},
+							#{roomTotalSize},
+							#{roomEmptySize},
+							#{roomPersonSex},
+							#{roomMoney},
+							#{roomDeposit},
+							#{roomManager},
+							#{roomManagerPhone},
+							now()
+						)
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_room where room_id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_room where room_id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="Room">
+		update crm_room set 
+					room_name = #{roomName},
+					room_address = #{roomAddress},
+					room_total_size = #{roomTotalSize},
+					room_empty_size = #{roomEmptySize},
+					room_person_sex = #{roomPersonSex},
+					room_money = #{roomMoney},
+					room_deposit = #{roomDeposit},
+					room_manager = #{roomManager},
+					room_manager_phone = #{roomManagerPhone}
+		where room_id = #{roomId}
+	</update>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from crm_room
+	</select>
+	
+	<select id="queryById" resultType="Room">
+		select * from crm_room where room_id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="Room">
+		select *from crm_room
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="Room" useCache="false">
+		SELECT * FROM crm_room LIMIT #{start},#{pageSize}
+	</select>
+	
+	<select id="queryByMap" parameterType="map" resultType="Room" useCache="false">
+		select * from crm_room where 1=1
+		<if test="name != null">
+			<bind name="name" value="'%'+name+'%'"/>
+			and room_name like #{name}
+		</if>
+	</select>
+</mapper>

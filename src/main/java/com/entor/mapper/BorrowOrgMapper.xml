@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.IBorrowOrgDao">
+	<insert id="add" parameterType="BorrowOrg">
+		insert into crm_borrow_org(id,name,remark,begin_date,end_date,manager,phone,create_time)
+		value(#{id},#{name},#{remark},#{beginDate},#{endDate},#{manager},#{phone},now())
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_borrow_org(id,name,remark,begin_date,end_date,manager,phone,create_time)values
+			<foreach collection="list" item="b" separator="," >
+				(#{b.id},#{b.name},#{b.remark},#{b.beginDate},#{b.endDate},#{b.manager},#{b.phone},now())
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_borrow_org where id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_borrow_org where id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="BorrowOrg">
+		update crm_borrow_org set 
+					name = #{name},
+					remark = #{remark},
+					begin_date = #{beginDate},
+					end_date = #{endDate},
+					manager = #{manager},
+					phone = #{phone}
+		where id = #{id}
+	</update>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from crm_borrow_org
+	</select>
+	
+	<select id="queryById" resultType="BorrowOrg">
+		select * from crm_borrow_org where id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="BorrowOrg">
+		select *from crm_borrow_org
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="BorrowOrg">
+		select * from crm_borrow_org limit #{start},#{pageSize}
+	</select>
+	
+	<select id="queryByMap" parameterType="map" resultType="BorrowOrg">
+		select * from crm_borrow_org where 1=1
+		<if test="name != null">
+			<bind name="name" value="'%'+name+'%'"/>
+			and name like #{name}
+		</if>
+	</select>
+</mapper>

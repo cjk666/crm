@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.IStudentStudyDao">
+	
+	<insert id="add" parameterType="StudentStudy">
+		insert into crm_student_study(
+						id,
+						name,
+						sex,
+						phone,
+						address,
+						school_name,
+						school_major,
+						begin_date,
+						major_id,
+						contract_id,
+						contract_file,
+						contract_date,
+						create_time
+						)value(
+							#{id},
+							#{name},
+							#{sex},
+							#{phone},
+							#{address},
+							#{schoolName},
+							#{schoolMajor},
+							#{beginDate},
+							#{major.id},
+							#{contractId},
+							#{contractFile},
+							#{contractDate},
+							now()
+						)
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_student_study(
+						id,
+						name,
+						sex,
+						phone,
+						address,
+						school_name,
+						school_major,
+						begin_date,
+						major_id,
+						contract_id,
+						contract_file,
+						contract_date,
+						create_time
+						)values
+			<foreach collection="list" item="s" separator="," >
+				(
+					#{s.id},
+					#{s.name},
+					#{s.sex},
+					#{s.phone},
+					#{s.address},
+					#{s.schoolName},
+					#{s.schoolMajor},
+					#{s.beginDate},
+					#{s.major.id},
+					#{s.contractId},
+					#{s.contractFile},
+					#{s.contractDate},
+					now())
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_student_study where id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_student_study where id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="StudentStudy">
+		update crm_student_study set 
+						name = #{name},
+						sex = #{sex},
+						phone = #{phone},
+						address = #{address},
+						school_name = #{schoolName},
+						school_major = #{schoolMajor},
+						begin_date = #{beginDate},
+						major_id = #{major.id},
+						contract_id = #{contractId},
+						contract_file = #{contractFile},
+						contract_date = #{contractDate}
+		where id = #{id}
+	</update>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from crm_student_study
+	</select>
+	
+	<select id="queryById" resultType="StudentStudy">
+		select * from crm_student_study where id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="StudentStudy">
+		select *from crm_student_study
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultMap="studentStudyMap" useCache="false">
+		SELECT s.*,m.`id` MID,m.`name`mName,m.`manager`,m.`remark`,m.`begin_date` mbegin_date FROM crm_student_study s LEFT JOIN crm_major m 
+		ON s.`major_id` = m.`id`  ORDER BY create_time DESC 
+		LIMIT #{start},#{pageSize}
+	</select>
+	
+	<resultMap type="StudentStudy" id="studentStudyMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="sex" column="sex"/>
+		<result property="phone" column="phone"/>
+		<result property="address" column="address"/>
+		<result property="schoolName" column="school_name"/>
+		<result property="schoolMajor" column="school_major"/>
+		<result property="beginDate" column="begin_date"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="contractFile" column="contract_file"/>
+		<result property="contractDate" column="contract_date"/>
+		<result property="createTime" column="create_time"/>
+		<association property="major" javaType="Major">
+			<id property="id" column="MID"/>
+			<result property="name" column="mName"/>
+			<result property="manager" column="manager"/>
+			<result property="remark" column="remark"/>
+			<result property="beginDate" column="mbegin_date"/>
+		</association>
+	</resultMap>
+	
+	<select id="queryByMap" parameterType="map" resultType="StudentStudy" useCache="false">
+		select * from crm_student_study where 1=1
+		<if test="name != null">
+			<bind name="name" value="'%'+name+'%'"/>
+			and name like #{name}
+		</if>
+	</select>
+</mapper>

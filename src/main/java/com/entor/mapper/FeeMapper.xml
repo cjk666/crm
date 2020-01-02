@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.IFeeDao">
+	<insert id="add" parameterType="Fee">
+		insert into crm_fee(
+			id,
+			student_id,
+			pay_money,
+			pay_type,
+			borrow_org_id,
+			pay_date,
+			pay_statue,
+			create_time
+			)
+		value(
+			#{id},
+			#{studentId},
+			#{payMoney},
+			#{payType},
+			#{borrowOrgId},
+			#{payDate},
+			#{payStatue},
+			now()
+		)
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_fee(id,
+			student_id,
+			pay_money,
+			pay_type,
+			borrow_org_id,
+			pay_date,
+			pay_statue,
+			create_time
+			)values
+			<foreach collection="list" item="b" separator="," >
+				(
+					#{id},
+					#{studentId},
+					#{payMoney},
+					#{payType},
+					#{borrowOrgId},
+					#{payDate},
+					#{payStatue},
+					now()
+				)
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_fee where id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_fee where id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="Fee">
+		update crm_fee set 
+					student_id = #{studentId},
+					pay_money = #{payMoney},
+					pay_type = #{payType},
+					borrow_org_id = #{borrowOrgId},
+					pay_date = #{payDate},
+					pay_statue = #{payStatue}
+		where id = #{id}
+	</update>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from crm_fee
+	</select>
+	
+	<select id="queryById" resultType="Fee">
+		select * from crm_fee where id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="Fee">
+		select * from crm_fee
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="VFee">
+		select * from view_fee limit #{start},#{pageSize}
+	</select>
+	
+	<select id="queryByMap" parameterType="map" resultType="Fee">
+		select * from crm_fee where 1=1
+		<if test="name != null">
+			<bind name="name" value="'%'+name+'%'"/>
+			and name like #{name}
+		</if>
+	</select>
+</mapper>

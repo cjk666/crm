@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.IMajorDao">
+	<insert id="add" parameterType="Major">
+		insert into crm_major(id,name,manager,remark,begin_date)
+		value(#{id},#{name},#{manager},#{remark},#{beginDate})
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_major(id,name,manager,remark,begin_date)values
+			<foreach collection="list" item="b" separator="," >
+				(#{id},#{name},#{manager},#{remark},#{beginDate})
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_major where id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_major where id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="Major">
+		update crm_major set 
+					name = #{name},
+					manager = #{manager},
+					remark = #{remark},
+					begin_date = #{beginDate}
+		where id = #{id}
+	</update>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from crm_major
+	</select>
+	
+	<select id="queryById" resultType="Major">
+		select * from crm_major where id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="Major">
+		select * from crm_major
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="Major">
+		select * from crm_major limit #{start},#{pageSize}
+	</select>
+	
+	<select id="queryByMap" parameterType="map" resultType="Major">
+		select * from crm_major where 1=1
+		<if test="name != null">
+			<bind name="name" value="'%'+name+'%'"/>
+			and name like #{name}
+		</if>
+	</select>
+</mapper>

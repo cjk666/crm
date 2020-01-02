@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.IStudentListenDao">
+	
+	<insert id="add" parameterType="StudentListen">
+		insert into crm_student_listen(
+						id,
+						name,
+						sex,
+						phone,
+						address,
+						listen_date,
+						major_id,
+						create_time
+						)value(
+							#{id},
+							#{name},
+							#{sex},
+							#{phone},
+							#{address},
+							#{listenDate},
+							#{major.id},
+							now()
+						)
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_student_listen(
+						id,
+						name,
+						sex,
+						phone,
+						address,
+						listen_date,
+						major_id,
+						create_time
+						)values
+			<foreach collection="list" item="s" separator="," >
+				(
+					#{s.id},
+					#{s.name},
+					#{s.sex},
+					#{s.phone},
+					#{s.address},
+					#{s.listenDate},
+					#{s.major.id},
+					now())
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_student_listen where id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_student_listen where id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="StudentListen">
+		update crm_student_listen set 
+						name = #{name},
+						sex = #{sex},
+						phone = #{phone},
+						address = #{address},
+						listen_date = #{listenDate},
+						major_id = #{major.id}
+		where id = #{id}
+	</update>
+	
+	<select id="getTotal" resultType="int">
+		select count(*) from crm_student_listen
+	</select>
+	
+	<select id="queryById" resultType="StudentListen">
+		select * from crm_student_listen where id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="StudentListen">
+		select *from crm_student_listen
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultMap="studentListenMap">
+		SELECT s.*,m.`id` MID,m.`name`mName,m.`manager`,m.`remark`,m.`begin_date` mbegin_date FROM crm_student_listen s left join crm_major m 
+		on s.`major_id` = m.`id` ORDER BY create_time DESC 
+		LIMIT #{start},#{pageSize}
+	</select>
+	
+	<resultMap type="StudentListen" id="studentListenMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="sex" column="sex"/>
+		<result property="phone" column="phone"/>
+		<result property="address" column="address"/>
+		<result property="listenDate" column="listen_date"/>
+		<result property="createTime" column="create_time"/>
+		<association property="major" javaType="Major">
+			<id property="id" column="MID"/>
+			<result property="name" column="mName"/>
+			<result property="manager" column="manager"/>
+			<result property="remark" column="remark"/>
+			<result property="beginDate" column="mbegin_date"/>
+		</association>
+	</resultMap>
+	
+	<select id="queryByMap" parameterType="map" resultType="StudentListen">
+		select * from crm_student_listen where 1=1
+		<if test="name != null">
+			<bind name="name" value="'%'+name+'%'"/>
+			and teacher_name like #{name}
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.entor.dao.ITeacherDao">
+	
+	<!-- <resultMap type="Teacher" id="teacherMap">
+		<id property="teacherId" column="teacher_id"/>
+		<result property="teacherName" column="teacher_name"/>
+		<result property="teacherSex" column="teacher_sex"/>
+		<result property="teacherPhone" column="teacher_phone"/>
+		<result property="teacherAddress" column="teacher_address"/>
+		<result property="teacherEduLevel" column="teacher_edu_level"/>
+		<result property="teacherSkill" column="teacher_skill"/>
+		<result property="teacherSchoolName" column="teacher_school_name"/>
+		<result property="teacherMajorName" column="teacher_major_name"/>
+		<result property="teacherleaveSchoolDate" column="teacher_leave_school_date"/>
+		<result property="teacherJob" column="teacher_job"/>
+		<result property="teacherEntryDate" column="teacher_entry_date"/>
+		<result property="teacherEndDate" column="teacher_end_date"/>
+		<result property="teacherStatue" column="teacher_statue"/>
+		<result property="teacherPic" column="teacher_pic"/>
+		<result property="createTime" column="create_time"/>
+	</resultMap> -->
+	
+	<insert id="add" parameterType="Teacher">
+		insert into crm_teacher(
+						teacher_id,
+						teacher_name,
+						teacher_sex,
+						teacher_phone,
+						teacher_address,
+						teacher_edu_level,
+						teacher_skill,
+						teacher_school_name,
+						teacher_major_name,
+						teacher_leave_school_date,
+						teacher_job,
+						teacher_entry_date,
+						teacher_end_date,
+						teacher_statue,
+						teacher_pic,
+						create_time
+						)value(
+							#{teacherId},
+							#{teacherName},
+							#{teacherSex},
+							#{teacherPhone},
+							#{teacherAddress},
+							#{teacherEduLevel},
+							#{teacherSkill},
+							#{teacherSchoolName},
+							#{teacherMajorName},
+							#{teacherleaveSchoolDate},
+							#{teacherJob},
+							#{teacherEntryDate},
+							#{teacherEndDate},
+							#{teacherStatue},
+							#{teacherPic},
+							now()
+						)
+	</insert>
+	
+	<insert id="addMore">
+		insert into crm_teacher(
+						teacher_id,
+						teacher_name,
+						teacher_sex,
+						teacher_phone,
+						teacher_address,
+						teacher_edu_level,
+						teacher_skill,
+						teacher_school_name,
+						teacher_major_name,
+						teacher_leave_school_date,
+						teacher_job,
+						teacher_entry_date,
+						teacher_end_date,
+						teacher_statue,
+						teacher_pic,
+						create_time
+						)values
+			<foreach collection="list" item="t" separator="," >
+				(
+					#{t.teacherId},
+					#{t.teacherName},
+					#{t.teacherSex},
+					#{t.teacherPhone},
+					#{t.teacherAddress},
+					#{t.teacherEduLevel},
+					#{t.teacherSkill},
+					#{t.teacherSchoolName},
+					#{t.teacherMajorName},
+					#{t.teacherleaveSchoolDate},
+					#{t.teacherJob},
+					#{t.teacherEntryDate},
+					#{t.teacherEndDate},
+					#{t.teacherStatue},
+					#{t.teacherPic},
+					now())
+			</foreach>
+	</insert>
+	
+	<delete id="deleteById">
+		delete from crm_teacher where teacher_id = #{id}
+	</delete>
+	
+	<delete id="deleteMore">
+		delete from crm_teacher where teacher_id in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="Teacher">
+		update crm_teacher set 
+					teacher_name = #{teacherName},
+					teacher_sex = #{teacherSex},
+					teacher_phone = #{teacherPhone},
+					teacher_address = #{teacherAddress},
+					teacher_edu_level = #{teacherEduLevel},
+					teacher_skill = #{teacherSkill},
+					teacher_school_name = #{teacherSchoolName},
+					teacher_major_name = #{teacherMajorName},
+					teacher_leave_school_date = #{teacherleaveSchoolDate},
+					teacher_job = #{teacherJob},
+					teacher_entry_date = #{teacherEntryDate},
+					teacher_end_date = #{teacherEndDate},
+					teacher_statue = #{teacherStatue},
+					teacher_pic = #{teacherPic}
+		where teacher_id = #{teacherId}
+	</update>
+	
+	<select id="getTotal" resultType="int" parameterType="Teacher">
+		select count(*) from crm_teacher 
+		<where>
+			<if test="teacherName != null and teacherName != ''">
+				<bind name="name" value="'%' +teacherName+ '%'"/>
+				and teacher_name like #{name}
+			</if>
+			<if test="teacherSkill != null and teacherSkill != ''">
+				<bind name="skill" value="'%' +teacherSkill+ '%'"/>
+				and teacher_skill like #{skill}
+			</if>
+			<if test="teacherStatue != null and teacherStatue != ''">
+				<bind name="statue" value="'%' +teacherStatue+ '%'"/>
+				and teacher_statue like #{statue}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryById" resultType="Teacher">
+		select * from crm_teacher where teacher_id = #{id}
+	</select>
+	
+	<select id="queryAll" resultType="Teacher">
+		select * from crm_teacher
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="Teacher">
+		select * from crm_teacher 
+		<where>
+			<if test="teacher.teacherName != null and teacher.teacherName != ''">
+				<bind name="name" value="'%' +teacher.teacherName+ '%'"/>
+				and teacher_name like #{name}
+			</if>
+			<if test="teacher.teacherSkill != null and teacher.teacherSkill != ''">
+				<bind name="skill" value="'%' +teacher.teacherSkill+ '%'"/>
+				and teacher_skill like #{skill}
+			</if>
+			<if test="teacher.teacherStatue != null">
+				<bind name="statue" value="'%' +teacher.teacherStatue+ '%'"/>
+				and teacher_statue like #{statue}
+			</if>
+		</where>
+		ORDER BY create_time 
+		limit #{start},#{pageSize}
+	</select>
+	
+	<select id="queryByMap" parameterType="map" resultType="Teacher">
+		select * from crm_teacher where 1=1
+		<if test="q != null">
+			<bind name="q" value="'%'+q+'%'"/>
+			and teacher_name like #{q}
+		</if>
+	</select>
+</mapper>

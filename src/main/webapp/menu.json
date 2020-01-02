@@ -1,0 +1,61 @@
+[{    
+    "id":1,    
+    "text":"合作机构",
+    "attributes":{
+    	"url":"borroworg.jsp"
+    } 
+},{    
+    "id":2,    
+    "text":"试听班级管理",
+    "attributes":{
+    	"url":"classeslisten.jsp"
+    } 
+},{    
+    "id":3,    
+    "text":"签约班级管理",
+    "attributes":{
+    	"url":"classesstudy.jsp"
+    } 
+},{    
+    "id":4,    
+    "text":"专业管理",
+    "attributes":{
+    	"url":"major.jsp"
+    } 
+},{    
+    "id":5,    
+    "text":"试听学生管理",
+    "attributes":{
+    	"url":"studentlisten.jsp"
+    }  
+},{    
+    "id":6,    
+    "text":"签约学生管理",
+    "attributes":{
+    	"url":"studentstudy.jsp"
+    }  
+},{    
+    "id":7,    
+    "text":"教师管理",
+    "attributes":{
+    	"url":"teacher.jsp"
+    }  
+},{    
+    "id":8,    
+    "text":"学生费用管理",
+    "attributes":{
+    	"url":"fee.jsp"
+    }  
+},{    
+    "id":9,    
+    "text":"住宿管理",
+    "attributes":{
+    	"url":"room.jsp"
+    }  
+},{    
+    "id":10,    
+    "text":"住宿房间费用",
+    "attributes":{
+    	"url":"roomFee.jsp"
+    }  
+}]
